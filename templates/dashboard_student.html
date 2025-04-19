@@ -8,7 +8,6 @@
     <p class="text-muted mb-4">Registration No: {{ reg }}</p>
   {% endif %}
 
-  <!-- Personal Info -->
   {% if student_info %}
   <div class="card mb-4 shadow-sm">
     <div class="card-header bg-info text-white">
@@ -35,9 +34,8 @@
   </div>
   {% endif %}
 
-  <!-- Info Cards -->
   <div class="row g-4">
-    <!-- Mess Info -->
+    
     <div class="col-md-4">
       <div class="card h-100 shadow-sm">
         <div class="card-header bg-success text-white">
@@ -55,7 +53,6 @@
       </div>
     </div>
 
-    <!-- Fee Info -->
     <div class="col-md-4">
       <div class="card h-100 shadow-sm">
         <div class="card-header bg-primary text-white">
@@ -74,7 +71,6 @@
       </div>
     </div>
 
-    <!-- Complaint History -->
     <div class="col-md-4">
       <div class="card h-100 shadow-sm">
         <div class="card-header bg-warning text-dark">
@@ -110,7 +106,6 @@
     </div>
   </div>
 
-  <!-- Complaint Form -->
   <div class="card shadow-sm my-4">
     <div class="card-header bg-secondary text-white">
       <h5 class="mb-0">Submit a New Complaint</h5>
@@ -130,7 +125,6 @@
     </div>
   </div>
 
-  <!-- Logout -->
   <div class="text-end">
     <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
   </div>
