@@ -5,9 +5,8 @@ from datetime import datetime
 cx_Oracle.init_oracle_client(lib_dir="/Users/mananyatrivedi/Downloads/instantclient_23_3")
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key_here"  # Replace with a strong, random secret key
+app.secret_key = "your_secret_key_here" 
 
-# Oracle DB connection
 import os
 conn = cx_Oracle.connect(
     os.environ.get("DB_USER"),
@@ -16,30 +15,17 @@ conn = cx_Oracle.connect(
 )
 cursor = conn.cursor()
 
-############################
-# CONTEXT PROCESSOR
-############################
 @app.context_processor
 def inject_now():
-    # For showing current year in the footer
     return {'now': lambda: datetime.utcnow()}
 
-############################
-# HELPER: CHECK ADMIN
-############################
 def is_admin():
     return ("user" in session) and (session.get("role") == "admin")
 
-############################
-# HOME
-############################
 @app.route("/")
 def home():
     return redirect(url_for('login'))
 
-############################
-# LOGIN
-############################
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -52,7 +38,7 @@ def login():
         if user is None:
             return render_template("login.html", error="No account found with that username.")
 
-        stored_password = user[0]  # get from query result
+        stored_password = user[0] 
         role = user[1]
 
         if password != stored_password:
@@ -64,9 +50,6 @@ def login():
 
     return render_template("login.html")
 
-############################
-# REGISTER
-############################
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -80,14 +63,12 @@ def register():
             flash("Passwords do not match!", "danger")
             return render_template("register.html")
 
-        # Check if username already exists
         cursor.execute("SELECT * FROM login_users WHERE username = :u", {"u": username})
         existing = cursor.fetchone()
         if existing:
             flash("Username already taken!", "danger")
             return render_template("register.html")
 
-        # Insert new user (plain password)
         try:
             cursor.execute("""
                 INSERT INTO login_users (username, reg_id, password, role)
@@ -102,9 +83,6 @@ def register():
 
     return render_template("register.html")
 
-############################
-# DASHBOARD
-############################
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session or "role" not in session:
@@ -112,9 +90,6 @@ def dashboard():
         return redirect(url_for("login"))
 
     if session["role"] == "admin":
-        # ========== ADMIN BRANCH ==========
-
-        # 1) All students + Mess info
         try:
             cursor.execute("""
                 SELECT s.admission_year,
@@ -141,7 +116,6 @@ def dashboard():
             flash(str(e), "danger")
             all_students = []
 
-        # 2) Unpaid fees
         try:
             cursor.execute("""
                 SELECT fee_id, reg_id, status, amount, due_date, paid_on
@@ -166,7 +140,6 @@ def dashboard():
             flash(str(e), "danger")
             paid_fees = []
 
-        # 3) Unresolved complaints
         try:
             cursor.execute("""
                 SELECT complaint_id, reg_id, issue_type, description, status
@@ -189,15 +162,12 @@ def dashboard():
         )
 
     else:
-        # ========== STUDENT BRANCH ==========
         username = session["user"]
 
-        # Get reg_id from login_users
         cursor.execute("SELECT reg_id FROM login_users WHERE username = :u", {"u": username})
         row = cursor.fetchone()
         reg_id = row[0] if row else None
 
-        # Personal info
         cursor.execute("""
             SELECT admission_year, contact, dob, email, gender, guardian_name,
                    guardian_phone, hostel_block, name, registration_number,
@@ -207,7 +177,6 @@ def dashboard():
         """, {"r": reg_id})
         student_info = cursor.fetchone()
 
-        # Mess info
         cursor.execute("""
             SELECT meal_plan, allergies, mess_provider
             FROM mess
@@ -215,7 +184,6 @@ def dashboard():
         """, {"r": reg_id})
         mess_info = cursor.fetchone()
 
-        # Fee info
         cursor.execute("""
             SELECT status, amount, due_date, paid_on
             FROM fees
@@ -223,7 +191,6 @@ def dashboard():
         """, {"r": reg_id})
         fee_info = cursor.fetchone()
 
-        # All complaints
         cursor.execute("""
             SELECT issue_type, description, status
             FROM complaints
@@ -242,9 +209,6 @@ def dashboard():
             complaints=complaints
         )
 
-############################
-# STUDENT: SUBMIT COMPLAINT
-############################
 @app.route("/submit_complaint", methods=["POST"])
 def submit_complaint():
     if "user" in session:
@@ -271,9 +235,6 @@ def submit_complaint():
         return redirect(url_for("dashboard"))
     return redirect(url_for("login"))
 
-############################
-# MARK FEE PAID
-############################
 @app.route("/mark_fee_paid", methods=["POST"])
 def mark_fee_paid():
     if "user" in session and session["role"] == "admin":
@@ -292,9 +253,6 @@ def mark_fee_paid():
         return redirect(url_for("dashboard"))
     return redirect(url_for("login"))
 
-############################
-# UPDATE COMPLAINT
-############################
 @app.route("/update_complaint", methods=["POST"])
 def update_complaint():
     if "user" in session and session["role"] == "admin":
@@ -313,9 +271,6 @@ def update_complaint():
         return redirect(url_for("dashboard"))
     return redirect(url_for("login"))
 
-############################
-# RUN CUSTOM QUERY
-############################
 @app.route("/runquery", methods=["GET", "POST"])
 def runquery():
     if "user" in session and session["role"] == "admin":
@@ -391,9 +346,6 @@ def admin_resolved_complaints():
         return render_template("resolved_complaints.html", complaints=resolved_complaints, user=session["user"])
     return redirect(url_for("login"))
 
-############################
-# LOGOUT
-############################
 @app.route("/logout")
 def logout():
     session.clear()
