@@ -40,4 +40,4 @@ A web-based Hostel Management System for managing student information, mess allo
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/your-username/HostelManagementSystem.git
+   git clone https://github.com/nanyatrivedi/HostelManagementSystem.git
