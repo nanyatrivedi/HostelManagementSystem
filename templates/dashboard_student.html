@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-2">Welcome, {{ user }}!</h2>
+  {% if reg %}
+    <p class="text-muted mb-4">Registration No: {{ reg }}</p>
+  {% endif %}
+
+  <!-- Personal Info -->
+  {% if student_info %}
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-info text-white">
+      <h5 class="mb-0">Personal Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Full Name:</strong> {{ student_info[8] }}</p>
+          <p><strong>Admission Year:</strong> {{ student_info[0] }}</p>
+          <p><strong>Contact:</strong> {{ student_info[1] }}</p>
+          <p><strong>Date of Birth:</strong> {{ student_info[2] }}</p>
+          <p><strong>Email:</strong> {{ student_info[3] }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Gender:</strong> {{ student_info[4] }}</p>
+          <p><strong>Guardian Name:</strong> {{ student_info[5] }}</p>
+          <p><strong>Guardian Phone:</strong> {{ student_info[6] }}</p>
+          <p><strong>Hostel Block:</strong> {{ student_info[7] }}</p>
+          <p><strong>Room:</strong> {{ student_info[10] }} ({{ student_info[11] }})</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Info Cards -->
+  <div class="row g-4">
+    <!-- Mess Info -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Mess Information</h5>
+        </div>
+        <div class="card-body">
+          {% if mess_info %}
+            <p><strong>Meal Plan:</strong> {{ mess_info[0] }}</p>
+            <p><strong>Allergies:</strong> {{ mess_info[1] or "None" }}</p>
+            <p><strong>Provider:</strong> {{ mess_info[2] }}</p>
+          {% else %}
+            <p>No mess details available.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Fee Info -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Fee Details</h5>
+        </div>
+        <div class="card-body">
+          {% if fee_info %}
+            <p><strong>Status:</strong> {{ fee_info[0] }}</p>
+            <p><strong>Amount:</strong> ₹{{ fee_info[1] }}</p>
+            <p><strong>Due Date:</strong> {{ fee_info[2] }}</p>
+            <p><strong>Paid On:</strong> {{ fee_info[3] if fee_info[3] else "Not Paid" }}</p>
+          {% else %}
+            <p>No fee records found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Complaint History -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">Complaint History</h5>
+        </div>
+        <div class="card-body">
+          {% if complaints and complaints|length > 0 %}
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Issue Type</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for comp in complaints %}
+                  <tr>
+                    <td>{{ comp[0] }}</td>
+                    <td>{{ comp[1] }}</td>
+                    <td>{{ comp[2] }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p>No complaints submitted.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complaint Form -->
+  <div class="card shadow-sm my-4">
+    <div class="card-header bg-secondary text-white">
+      <h5 class="mb-0">Submit a New Complaint</h5>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('submit_complaint') }}">
+        <div class="mb-3">
+          <label class="form-label">Issue Type</label>
+          <input type="text" name="issue_type" class="form-control" placeholder="Eg: Food, Water..." required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea name="description" class="form-control" rows="3" placeholder="Briefly explain your issue..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Submit Complaint</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <div class="text-end">
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+  </div>
+</div>
+{% endblock %}

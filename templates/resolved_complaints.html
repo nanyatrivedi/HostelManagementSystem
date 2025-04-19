@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Resolved Complaints{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">✅ Resolved Complaints</h3>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">← Back to Dashboard</a>
+  </div>
+
+  {% if complaints %}
+    <div class="table-responsive shadow-sm">
+      <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Complaint ID</th>
+            <th scope="col">Registration No.</th>
+            <th scope="col">Issue Type</th>
+            <th scope="col">Description</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in complaints %}
+          <tr>
+            <td>{{ c[0] }}</td>
+            <td>{{ c[1] }}</td>
+            <td>{{ c[2] }}</td>
+            <td>{{ c[3] }}</td>
+            <td><span class="badge bg-success">{{ c[4] }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info">No resolved complaints found.</div>
+  {% endif %}
+</div>
+{% endblock %}

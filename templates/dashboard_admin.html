@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Welcome, Admin {{ user }}!</h2>
+
+  <!-- ===================== ALL STUDENT INFO ===================== -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Student Records (with Mess Info)</h5>
+    </div>
+    <div class="card-body table-responsive">
+      {% if all_students %}
+        <table class="table table-bordered table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>Reg. No</th>
+              <th>Name</th>
+              <th>Year</th>
+              <th>Contact</th>
+              <th>Block</th>
+              <th>Room (Type)</th>
+              <th>Meal Plan</th>
+              <th>Allergies</th>
+              <th>Provider</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for stu in all_students %}
+            <tr>
+              <td>{{ stu[9] }}</td>
+              <td>{{ stu[8] }}</td>
+              <td>{{ stu[0] }}</td>
+              <td>{{ stu[1] }}</td>
+              <td>{{ stu[7] }}</td>
+              <td>{{ stu[10] }} ({{ stu[11] }})</td>
+              <td>{{ stu[12] or "N/A" }}</td>
+              <td>{{ stu[13] or "None" }}</td>
+              <td>{{ stu[14] or "N/A" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="text-muted">No student records found.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ===================== UNPAID FEES ===================== -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-warning">
+      <h5 class="mb-0">Unpaid Fees</h5>
+    </div>
+    <div class="card-body table-responsive">
+      {% if unpaid_fees %}
+        <table class="table table-bordered table-striped align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>Fee ID</th>
+              <th>Reg. No</th>
+              <th>Status</th>
+              <th>Amount</th>
+              <th>Due Date</th>
+              <th>Paid On</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for fee in unpaid_fees %}
+            <tr>
+              <td>{{ fee[0] }}</td>
+              <td>{{ fee[1] }}</td>
+              <td>{{ fee[2] }}</td>
+              <td>₹{{ fee[3] }}</td>
+              <td>{{ fee[4] }}</td>
+              <td>{{ fee[5] or "Not Paid" }}</td>
+              <td>
+                <form action="{{ url_for('mark_fee_paid') }}" method="POST">
+                  <input type="hidden" name="fee_id" value="{{ fee[0] }}">
+                  <button type="submit" class="btn btn-sm btn-success">Mark Paid</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="text-muted">All fees are paid.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ===================== OPEN COMPLAINTS ===================== -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-danger text-white">
+      <h5 class="mb-0">Unresolved Complaints</h5>
+    </div>
+    <div class="card-body table-responsive">
+      {% if open_complaints %}
+        <table class="table table-bordered table-striped align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Reg. No</th>
+              <th>Issue</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for comp in open_complaints %}
+            <tr>
+              <td>{{ comp[0] }}</td>
+              <td>{{ comp[1] }}</td>
+              <td>{{ comp[2] }}</td>
+              <td>{{ comp[3] }}</td>
+              <td>{{ comp[4] }}</td>
+              <td>
+                <form action="{{ url_for('update_complaint') }}" method="POST" class="d-flex">
+                  <input type="hidden" name="complaint_id" value="{{ comp[0] }}">
+                  <select name="new_status" class="form-select form-select-sm me-2" required>
+                    <option value="">Select</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                  </select>
+                  <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="text-muted">No unresolved complaints at the moment.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ===================== FOOTER ACTIONS ===================== -->
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <a href="{{ url_for('runquery') }}" class="btn btn-outline-secondary">Run Custom Query</a>
+    <a href="{{ url_for('admin_resolved_complaints') }}" class="btn btn-outline-info">View Resolved Complaints</a>
+    <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+  </div>
+</div>
+{% endblock %}

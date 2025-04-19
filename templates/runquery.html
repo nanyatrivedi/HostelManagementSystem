@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Admin Custom Query{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">🛠️ Run Custom SQL Query</h5>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-light">← Back to Dashboard</a>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="mb-3">
+          <label for="query" class="form-label">SQL Query</label>
+          <textarea class="form-control" id="query" name="query" rows="4" required>{{ query }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Execute Query</button>
+      </form>
+
+      {% if error %}
+        <div class="alert alert-danger mt-4">{{ error }}</div>
+      {% endif %}
+
+      {% if result %}
+        <hr />
+        <h5 class="mt-4">📋 Query Results</h5>
+        <div class="table-responsive mt-3">
+          <table class="table table-bordered table-striped table-hover">
+            <thead class="table-dark">
+              <tr>
+                {% for col in columns %}
+                  <th>{{ col }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in result %}
+                <tr>
+                  {% for cell in row %}
+                    <td>{{ cell }}</td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

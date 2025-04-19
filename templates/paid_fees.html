@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Paid Fees{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-success text-white">
+      <h4 class="mb-0">💰 Paid Fee Records</h4>
+    </div>
+    <div class="card-body">
+      {% if paid_fees %}
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark text-center">
+              <tr>
+                <th>Fee ID</th>
+                <th>Reg. No</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Paid On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for fee in paid_fees %}
+              <tr>
+                <td>{{ fee[0] }}</td>
+                <td>{{ fee[1] }}</td>
+                <td>{{ fee[2] }}</td>
+                <td>₹{{ fee[3] }}</td>
+                <td>{{ fee[4] }}</td>
+                <td>{{ fee[5] if fee[5] else "N/A" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-info text-center mb-0">
+          No paid fee records found.
+        </div>
+      {% endif %}
+    </div>
+    <div class="card-footer text-end">
+      <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
